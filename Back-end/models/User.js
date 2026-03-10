@@ -3,7 +3,9 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
+     required: function() {
+      return this.role !== "admin"; 
+    },
     trim: true,
   },
   email: {
@@ -18,6 +20,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
+    enum: ["admin", "user", "teamMember"],
     default: "user",
   },
 }, { timestamps: true });

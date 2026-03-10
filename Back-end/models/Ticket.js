@@ -15,6 +15,20 @@ const ticketSchema = new mongoose.Schema({
     default: "Open",
   },
   date: { type: Date, required: true },
+  assignedTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null
+  },
+  assignedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null
+  },
+  assignedAt: {
+    type: Date,
+    default: null
+  }
 }, { timestamps: true });
 
 const Ticket = mongoose.model("Ticket", ticketSchema);

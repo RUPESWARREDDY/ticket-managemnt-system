@@ -112,3 +112,119 @@ export const verifyOtp = (otp) => {
     </div>`
   )
 }
+export const teamMemberAssignedEmail = (ticket, teamMember) => {
+  return `
+    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+      <h2 style="color: #007bff;">Hello ${teamMember.name},</h2>
+
+      <p>You have been assigned a new support ticket.</p>
+
+      <table style="border-collapse: collapse; margin-top: 10px;">
+        <tr>
+          <td style="padding: 6px 10px;"><strong>Ticket Title:</strong></td>
+          <td style="padding: 6px 10px;">${ticket.title}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 10px;"><strong>Description:</strong></td>
+          <td style="padding: 6px 10px;">${ticket.description}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 10px;"><strong>Assigned By:</strong></td>
+          <td style="padding: 6px 10px;">${ticket.assignedBy?.name}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 10px;"><strong>Status:</strong></td>
+          <td style="padding: 6px 10px;">${ticket.status}</td>
+        </tr>
+      </table>
+
+      <p>Please log in to your dashboard to view more details and take action.</p>
+
+      <p style="margin-top: 20px;">Best regards,<br>
+      <strong>Support Team</strong><br>
+      <span style="color: #555;">Ticket Management System</span></p>
+    </div>
+  `;
+};
+export const teamCredentials = (name,email,password) => {
+  const login="/login"
+  return (
+    `
+    <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+  <h2 style="color: #4CAF50;">Welcome to the Team!</h2>
+
+  <p>Hello <strong>${name}</strong>,</p>
+
+  <p>Your account has been created by the admin.  
+     You can now log in using the credentials below:</p>
+
+  <div style="background: #f4f4f4; padding: 15px; border-radius: 8px;">
+    <p><strong>Email:</strong> ${email}</p>
+    <p><strong>Password:</strong> ${password}</p>
+  </div>
+
+  <p>
+    Please log in and update your password for security.
+  </p>
+
+  <a href="${login}" 
+     style="display:inline-block; margin-top: 20px; padding: 10px 20px; background: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+     Login Now
+  </a>
+
+  <p style="margin-top: 30px;">Regards,<br><strong>Support Team</strong></p>
+</div>
+`
+  )
+}
+export const ticketAssignedToUserTemplate = (userName, ticket) => `
+<div style="font-family: Arial; padding:20px; background:#f5f7fa;">
+  <div style="max-width:600px;margin:auto;background:white;padding:25px;border-radius:10px;">
+    <h2 style="color:#007bff;">Ticket Assigned</h2>
+
+    <p>Hi <strong>${userName}</strong>,</p>
+
+    <p>Your ticket has been assigned to our support team. The assigned member will contact you soon.</p>
+
+    <h3>🎫 Ticket Details</h3>
+    <p><strong>Ticket ID:</strong> ${ticket._id}</p>
+    <p><strong>Title:</strong> ${ticket.title}</p>
+    <p><strong>Priority:</strong> ${ticket.priority}</p>
+
+    <h3>👨‍💻 Assigned To</h3>
+    <p><strong>${ticket.assignedTo.name}</strong></p>
+    <p>Email: ${ticket.assignedTo.email}</p>
+
+    <p style="margin-top:20px;">Thank you for your patience.</p>
+    <p><strong>Support Team</strong></p>
+  </div>
+</div>
+`;
+
+export const ticketAssignedToTeamTemplate = (memberName, ticket) => `
+<div style="font-family: Arial; padding:20px; background:#f5f7fa;">
+  <div style="max-width:600px;margin:auto;background:white;padding:25px;border-radius:10px;">
+    <h2 style="color:#28a745;">New Ticket Assigned</h2>
+
+    <p>Hi <strong>${memberName}</strong>,</p>
+
+    <p>A new ticket has been assigned to you. Please review and reach out to the user.</p>
+
+    <h3>🎫 Ticket Details</h3>
+    <p><strong>Ticket ID:</strong> ${ticket._id}</p>
+    <p><strong>Title:</strong> ${ticket.title}</p>
+    <p><strong>Description:</strong> ${ticket.description}</p>
+    <p><strong>Priority:</strong> ${ticket.priority}</p>
+
+    <h3>👤 User Information</h3>
+    <p><strong>${ticket.userId.name}</strong></p>
+    <p>Email: ${ticket.userId.email}</p>
+
+    <p>Assigned By: ${ticket.assignedBy.name}</p>
+    <p>Assigned At: ${ticket.assignedAt.toLocaleString()}</p>
+
+    <p style="margin-top:20px;">Please take prompt action.</p>
+    <p><strong>Support Team</strong></p>
+  </div>
+</div>
+`;
