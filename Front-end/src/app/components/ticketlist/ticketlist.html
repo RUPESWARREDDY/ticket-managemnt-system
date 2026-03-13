@@ -1,0 +1,71 @@
+<div class="card shadow p-4 vh-100">
+  <h4 class="mb-4">
+    <i class="bi bi-ticket-detailed me-2"></i>{{ title }}
+  </h4>
+
+  <table class="table table-bordered  table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>#</th>
+        <th>Title</th>
+        <th>Category</th>
+        <th>Status</th>
+        <th>Priority</th>
+        <th>User</th>
+        <th>Assigned To</th>
+        <th  >Assign</th>
+      </tr>
+    </thead>
+
+    <tbody>
+        <tr *ngIf="tickets.length === 0">
+          <td colspan="8" class="text-center" style="height: 50vh; background: white;">
+            <h4 class="text-center" style="opacity: 0.6; margin-top: 150px; font-size: 16px;">No records found</h4>
+          </td>
+        </tr>
+      <tr *ngFor="let t of tickets; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ t.title }}</td>
+        <td>{{ t.category }}</td>
+        <td>
+          <span class="badge bg-primary" *ngIf="t.status === 'Open'">Open</span>
+          <span class="badge bg-warning text-dark" *ngIf="t.status === 'In Progress'">In Progress</span>
+          <span class="badge bg-danger" *ngIf="t.status === 'Closed'">Closed</span>
+        </td>
+         <td><span class="badge bg-success" *ngIf="t.priority === 'Low'">{{t.priority}}</span>
+          <span class="badge bg-warning text-dark" *ngIf="t.priority === 'Medium'">{{t.priority}}</span>
+          <span class="badge bg-danger" *ngIf="t.priority === 'High'">{{t.priority}}</span></td>
+        <td>{{ t.userId?.name }}</td>
+
+        <td>
+          <span *ngIf="t.assignedTo">{{ t.assignedTo.name }}</span>
+          <span class="text-muted" *ngIf="!t.assignedTo">Not Assigned</span>
+        </td>
+
+        <td *ngIf="t.status !== 'Closed'&&t.status !== 'In Progress';else action ">
+          <select class="form-select" (change)="assignTeam(t._id, $event)">
+            <option value="">Assign</option>
+            <option *ngFor="let m of teamMembers" [value]="m._id">
+              {{ m.name }}
+            </option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+   <ng-container *ngIf="(tickets.length>=5 || tickets.length<=5) && tickets.length>0"> 
+    <div class="d-flex justify-content-center align-items-center mt-3 paging">
+      <button class="btn btn-primary text-white" (click)="prevPage()" [disabled]="currentPage === 1">
+     <span aria-hidden="true">&laquo;</span>
+      </button>
+      <span class="mx-4">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button class="btn btn-primary text-white" (click)="nextPage()" [disabled]="currentPage === totalPages">
+        <span aria-hidden="true">&raquo;</span>
+      </button>
+
+    </div>
+  </ng-container>
+  <ng-template #action>
+    <td class="text-center">-</td>
+  </ng-template>
+</div>

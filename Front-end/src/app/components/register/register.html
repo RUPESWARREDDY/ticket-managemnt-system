@@ -1,0 +1,72 @@
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light p-0 m-0">
+  <div class="row w-100 h-100" style="background: linear-gradient(180deg, #6610f2, #007bff);">
+
+    <div class="col-md-6 d-flex d-md-flex flex-column justify-content-center align-items-center text-white p-5">
+      <h1 class="fw-bold mb-3">Service Ticket Management</h1>
+      <p class="fs-5 text-center">
+        Efficiently manage service requests and track issues from one dashboard.
+      </p>
+
+    </div>
+    <div class="col-md-6 d-flex align-items-center justify-content-center p-4">
+      <div class="card shadow-lg border-0 rounded-4" style="width: 100%; max-width: 420px;">
+        <div class="card-body">
+          <h2 class="text-center mb-4 fw-bold text-primary">Create Account</h2>
+
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Full Name</label>
+              <input type="text" formControlName="name" class="form-control" placeholder="Enter your name" />
+              <div *ngIf="f['name'].touched && f['name'].invalid" class="text-danger small mt-1">
+                Name is required
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Email</label>
+              <input type="email" formControlName="email" class="form-control" placeholder="Enter your email" />
+              <div *ngIf="f['email'].touched && f['email'].hasError('email')" class="text-danger small">
+                Please enter a valid email address.
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+
+              <div class="input-group">
+                <input [type]="passwordVisible ? 'text' : 'password'" class="form-control" formControlName="password"
+                  placeholder="Enter password" />
+                <button type="button" class="btn b-color" (click)="togglePassword()">
+                  <i class="bi" [ngClass]="passwordVisible ? 'bi-eye' : 'bi-eye-slash'"></i>
+                </button>
+              </div>
+              <div *ngIf="f['password'].touched && f['password'].invalid" class="text-danger small mt-1">
+                Minimum 6 characters required
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Confirm Password</label>
+
+              <div class="input-group">
+                <input [type]="passwordVisible ? 'text' : 'password'" formControlName="confirmPassword"
+                  class="form-control" placeholder="Confirm password" />
+              </div>
+
+              <div *ngIf="f['confirmPassword'].touched && f['confirmPassword'].hasError('mismatch')"
+                class="text-danger small mt-1">
+                Passwords do not match
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 fw-semibold" [disabled]="registerForm.invalid">
+              Register
+            </button>
+          </form>
+          <p class="text-center mt-3 small">
+            Already have an account?
+            <a routerLink="/login" class="text-decoration-none text-primary fw-semibold">Login</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

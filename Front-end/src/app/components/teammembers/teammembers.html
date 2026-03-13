@@ -1,0 +1,50 @@
+<div class="card shadow p-4  vh-100">
+  <div class="d-flex justify-content-between">
+    <h4><i class="bi bi-people me-2"></i>Team Members- {{teamCount}}</h4>
+    <div>
+       <input 
+    type="text" 
+    class="form-control   " 
+    placeholder="Search Member..."
+    [(ngModel)]="searchTerm"
+    (input)="searchMember()"
+  />
+    </div>
+  </div>
+  <table class="table table-hover mt-3">
+    <thead class="table-dark">
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Tickets Assigned</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngIf="teamCount===0">
+        <td colspan="5"  class="text-center py-5 fs-5">Add Team members</td>
+      </tr>
+      <tr *ngFor="let m of filteredMember; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ m.name }}</td>
+        <td>{{ m.email }}</td>
+        <td>{{ m.assignedCount }}</td>
+        <td> <button class="btn btn-danger" (click)="confirmDelete(m._id)">Delete</button></td>
+      </tr>
+    </tbody>
+  </table>
+     <ng-container *ngIf="filteredMember.length>1">
+    <div class="d-flex justify-content-center align-items-center mt-3 paging">
+      <button class="btn btn-primary text-white" (click)="prevPage()" [disabled]="currentPage === 1">
+         <span aria-hidden="true">&laquo;</span>
+      </button>
+      <span class="mx-4">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button class="btn btn-primary text-white" (click)="nextPage()" [disabled]="currentPage === totalPages">
+     <span aria-hidden="true">&raquo;</span>
+      </button>
+
+    </div>
+  </ng-container>
+</div>

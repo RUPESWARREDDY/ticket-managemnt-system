@@ -1,0 +1,271 @@
+<div class="container-fluid pt-2" style="background: #f8f5f5; height:100vh">
+  <div class="ticket-header d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h2>Open Tickets</h2>
+      <p>These are your tickets that are yet to be addressed.</p>
+    </div>
+    <div>
+
+      <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+        aria-controls="offcanvasRight">+ New Ticket</button>
+      <button class="btn btn-danger text-white ms-4" (click)="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="bg-white mb-3 border-bottom shadow-sm">
+    <ul class="nav nav-tabs custom-tabs ">
+      <li class="nav-item">
+        <button class="nav-link border-b-primary" [class.active]="activeTab === 'active'" (click)="switchTab('active')">
+          Active Tickets
+        </button>
+      </li>
+
+      <li class="nav-item">
+        <button class="nav-link border-primary" [class.active]="activeTab === 'closed'" (click)="switchTab('closed')">
+          Closed
+        </button>
+      </li>
+    </ul>
+  </div>
+  <div class="ticket-list ">
+    <table class="table  ">
+      <thead style="background: transparent;">
+        <tr class="bg-transparent">
+          <th scope="col">Ticket #</th>
+          <th scope="col">Title</th>
+          <th scope="col">Raised On</th>
+          <th scope="col">Priority</th>
+          <th scope="col">Category</th>
+          <th scope="col" class="description">Description</th>
+          <th scope="col">Status</th>
+          <th scope="col" colspan="2" class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody style="background: white; ">
+        <tr *ngIf="currentTickets.length === 0">
+          <td colspan="8" class="text-center" style="height: 50vh; background: white;">
+            <h4 class="text-center" style="opacity: 0.6; margin-top: 150px; font-size: 16px;">No records found</h4>
+          </td>
+        </tr>
+        <tr *ngFor="let ticket of currentTickets, let i = index">
+          <td (click)="openViewDialog(ticket)" data-bs-toggle="modal" data-bs-target="#viewTicketModal" class="title">
+            {{ ticket?._id }}</td>
+          <td>{{ ticket.title }}</td>
+          <td>{{ ticket.date | date: 'dd/MM/yyyy'}}</td>
+          <td>{{ ticket.priority }}</td>
+          <td>{{ ticket.category }}</td>
+          <td class="description" [title]="ticket?.description">{{ ticket.description | slice:0:50 }}</td>
+          <td> <span [ngClass]="ticket.status === 'Closed' ? 'red' : 'green'">{{ticket.status}}</span></td>
+          <td>
+            <ng-container *ngIf="ticket.status !== 'Closed'; else closedBlock">
+              <button (click)="handleEditWithConfirmation(ticket)" class="btn btn-primary btn-sm"
+                data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Edit</button>
+            </ng-container>
+            <ng-template #closedBlock>
+              -
+            </ng-template>
+          </td>
+          <td>
+            <ng-container *ngIf="ticket.status !== 'Closed'; else closedBlock">
+              <button (click)=" openDeleteDialog(ticket)" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal"
+                [disabled]="ticket.status === 'Closed'" class="btn btn-danger btn-sm">Delete</button>
+            </ng-container>
+
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ng-container *ngIf="currentTickets.length!=0">
+    <div class="d-flex justify-content-center align-items-center mt-3 page">
+      <button class="btn btn-primary text-white" (click)="prevPage()" [disabled]="currentPage === 1">
+         <span aria-hidden="true">&laquo;</span>
+      </button>
+      <span class="mx-4">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button class="btn btn-primary text-white" (click)="nextPage()" [disabled]="currentPage === totalPages">
+     <span aria-hidden="true">&raquo;</span>
+      </button>
+
+    </div>
+  </ng-container>
+  <!-- create ticket -->
+     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header text-white" style="background: #4a5363;">
+      <h5 class="offcanvas-title">{{ editingTicketId ? 'Edit Ticket' : 'Raise a Ticket' }}</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="ps-3" style="background: #f3f4f7; height: 50px;">
+      You can share any concern or seek help from your organization.
+    </div>
+    <div class="offcanvas-body" style="overflow-y: auto;">
+      <form [formGroup]="newTicketForm" (ngSubmit)="handleSubmit()">
+        <div class="form-group">
+          <label for="category">
+            Need help regarding
+
+          </label>
+          <select class="form-select no-focus-outline" formControlName="category" (change)="onCategoryChange()"
+            required>
+            <option value="">Select a category</option>
+            <option value="Form16">Form16</option>
+            <option value="Human Resources">Human Resources</option>
+            <option value="Income Tax queries">Income Tax queries</option>
+            <option value="Others">Others</option>
+            <option value="PayRoll Query">PayRoll Query</option>
+            <option value="Transfers">Transfers</option>
+            <option value="Software Installation">Software</option>
+          </select>
+          <div *ngIf="f['category'].touched && f['category'].invalid" class="text-danger small mt-1">
+            category required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="title">
+            Title
+          </label>
+          <input type="text" class="form-control" formControlName="title"
+            placeholder="Write a short & relevant ticket title" required />
+          <div *ngIf="f['title'].touched && f['title'].invalid" class="text-danger small mt-1">
+            title required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="priority">
+            Priority
+
+          </label>
+          <select class="form-select no-focus-outline" formControlName="priority" required>
+            <option value="">Select Priority</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+          <div *ngIf="f['priority'].touched && f['priority'].invalid" class="text-danger small mt-1">
+            priority required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="date">
+            Raised On
+
+          </label>
+          <input type="date" class="form-control" formControlName="date" required readonly />
+          <div *ngIf="f['date'].dirty ||f['date'].touched " class="text-danger text-end small mt-1">
+            date is read only
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="description">
+            Please share the assistance required
+
+          </label>
+          <textarea class="form-control" formControlName="description" placeholder="Write your description here..."
+            required></textarea>
+          <div *ngIf="f['description'].touched && f['description'].invalid" class="text-danger small mt-1">
+            description required
+          </div>
+        </div>
+
+        <div class="modal-footer footer1">
+          <button type="button" class="btn btn-white border me-2 bg-white text-black" data-bs-dismiss="offcanvas"
+            aria-label="Close" (click)="cancel()">Cancel</button>
+          <button type="submit" class="btn btn-warning text-white ms-2 me-3" data-bs-dismiss="offcanvas"
+            aria-label="Close">
+            {{ editingTicketId ? 'Update Ticket' : 'Raise Ticket' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- VIEW TICKET MODAL -->
+  <div class="modal fade" id="viewTicketModal" tabindex="-1" aria-labelledby="viewTicketModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content shadow-lg border-0" style="border-radius: 12px;">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title fw-semibold" id="viewTicketModalLabel">
+            Ticket Details
+          </h5>
+          <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="fw-bold">Title:</label>
+              <p class="text-secondary">{{ selectedTicket?.title }}</p>
+            </div>
+            <div class="col-md-6">
+              <label class="fw-bold">Category:</label>
+              <p class="text-secondary">{{ selectedTicket?.category }}</p>
+            </div>
+            <div class="col-md-6">
+              <label class="fw-bold">Priority:</label>
+              <span class="badge px-3 py-2" [ngClass]="{
+                    'bg-success': selectedTicket?.priority === 'Low',
+                    'bg-warning text-dark': selectedTicket?.priority === 'Medium',
+                    'bg-danger': selectedTicket?.priority === 'High'
+                  }">
+                {{ selectedTicket?.priority }}
+              </span>
+            </div>
+            <div class="col-md-6">
+              <label class="fw-bold">Raised On:</label>
+              <p class="text-secondary">{{ selectedTicket?.date | date:'mediumDate' }}</p>
+            </div>
+            <div class="col-md-6">
+              <label class="fw-bold">Status:</label>
+              <span class="badge px-3 py-2" [ngClass]="{
+                    'bg-success': selectedTicket?.status === 'Open',
+                    'bg-primary': selectedTicket?.status === 'In Progress',
+                    'bg-danger': selectedTicket?.status === 'Closed'
+                  }">
+                {{ selectedTicket?.status }}
+              </span>
+            </div>
+            <div class="col-md-12 mt-3">
+              <label class="fw-bold">Description:</label>
+              <p class="text-secondary" style="white-space: pre-line;">
+                {{ selectedTicket?.description }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- DELETE  MODAL -->
+  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
+        <div class="modal-header bg-secondary text-white">
+          <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Deletion</h5>
+          <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-2 fw-semibold">Are you sure you want to delete this ticket?</p>
+
+          <div class="bg-light p-3 rounded border">
+            <p class="mb-1"><strong>Title:</strong> {{ selectedTicket?.title }}</p>
+            <p class="mb-0"><strong>Category:</strong> {{ selectedTicket?.category }}</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
+          <button class="btn btn-danger" (click)="handleDelete(selectedTicket._id)" data-bs-dismiss="modal">
+            Yes, Delete
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>

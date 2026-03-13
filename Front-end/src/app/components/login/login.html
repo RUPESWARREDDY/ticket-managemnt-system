@@ -1,0 +1,62 @@
+<div class="container-fluid vh-100">
+  <div class="row h-100" style="background: linear-gradient(180deg, #6610f2, #007bff);">
+    <div class="col-md-6 d-flex flex-column justify-content-center text-white p-5">
+      <h1 class="display-5 fw-bold mb-4">Service Ticket Management System</h1>
+      <p class="lead">
+        Simplify your service operations — track tickets, manage user requests, and
+        monitor resolution progress seamlessly.
+      </p>
+      <ul class="mt-4">
+        <li>Easy ticket creation and assignment</li>
+        <li>Role-based access for users and admins</li>
+        <li>Real-time status tracking</li>
+      </ul>
+    </div>
+
+    <div class="col-md-6 d-flex align-items-center justify-content-center  bg-image">
+      <div class="card shadow-lg p-4 bg-white bg-opacity-90" style="width: 350px; border-radius: 15px;">
+        <h3 class="text-center mb-4 fw-semibold text-primary">Login</h3>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <input type="email" id="email" formControlName="email" class="form-control" placeholder="Enter email" />
+            <div *ngIf="f['email'].touched && f['email']?.errors?.['required']" class="text-danger small mt-1">
+              Email is required.
+            </div>
+            <div *ngIf="f['email']?.errors?.['email'] && f['email'].touched" class="text-danger small mt-1">
+              Provide valid Email.
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+
+            <div class="input-group">
+              <input [type]="passwordVisible ? 'text' : 'password'" class="form-control" formControlName="password"
+                placeholder="Enter your password" />
+              <button type="button" class="btn b-color" (click)="togglePassword()">
+                <i class="bi" [ngClass]="passwordVisible ? 'bi-eye' : 'bi-eye-slash'"></i>
+              </button>
+            </div>
+            <div *ngIf="f['password'].touched && f['password'].invalid" class="text-danger small mt-1">
+              Password is required.
+            </div>
+          </div>
+          <button type="submit" [disabled]="loginForm.invalid" class="btn btn-primary w-100 py-2 fw-semibold">
+            Login
+          </button>
+          <div class="text-center mt-2">
+            You forgot password?<a routerLink="/forgot-password" class="text-primary fw-semibold">Click here</a>
+          </div>
+          <hr />
+          <div class="text-center mt-3">
+            <p class="text-muted">
+              Don’t have an account?
+              <a routerLink="/register" class="text-primary text-decoration-none fw-semibold">Register here</a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

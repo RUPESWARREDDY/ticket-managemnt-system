@@ -1,0 +1,18 @@
+
+.sidebar .nav-link {
+  padding: 10px 15px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+.sidebar .nav-link:hover,
+.active-item {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.card {
+  transition: 0.25s;
+}
+.card:hover {
+  transform: scale(1.03);
+}
